@@ -26,9 +26,23 @@ var attendanceTrackerApp = function(targets) {
                 attendance: []
             }
         ],
-        update: function(student, session, value) {
+        setAttendance: function(student, session, value) {
             // updates the attendance array
             data.students[student].attendance[session] = value;
+        },
+        setDays: function(days) {
+            // updates the days
+            data.days = days;
+        },
+        setStudents: function(students) {
+            // updates the names of the students
+            var index = 0
+                studentsLength = students.length;
+
+            while (index < studentsLength) {
+                data.students[index].name = students[index];
+                index += 1;
+            }
         }
     };
 
@@ -91,7 +105,17 @@ var attendanceTrackerApp = function(targets) {
             // and value (checked or unchecked)
 
             // update the data
-            data.update(student, button, value);
+            data.setAttendance(student, button, value);
+        },
+        adminUpdate: function(updates) {
+            // parses the updates object and
+            // send them back to the data model
+            var days = updates.days,
+                students = updates.students;
+
+            data.setDays(days);
+
+            data.setStudents(students);
         },
         init: function() {
             // create some records
@@ -99,10 +123,13 @@ var attendanceTrackerApp = function(targets) {
 
             // render the view layer
             view.init();
+
+            // render the admin view
+            adminView.init();
         }
     };
 
-    // view
+    // views
     var view = {
         context: function() {
             // get the data and templates
@@ -214,7 +241,102 @@ var attendanceTrackerApp = function(targets) {
             // render the view
             this.render();
         }
-    }
+    };
+
+    var adminView = {
+        context: function() {
+            // get the data and template
+            var allData = app.getData(),
+                context = {
+                    days: allData.days,
+                    students: allData.students,
+                    adminTemplate: targets.adminTemplate
+                };
+
+            return context;
+        },
+        render: function() {
+            var context = this.context(),
+                days = context.days,
+                students = context.students,
+                studentsLength = students.length,
+                template = $(context.adminTemplate).html(),
+                index = 0;
+
+            // display the admin panel
+            $('.attendance-admin-area').toggleClass('hidden');
+            // clear any html incase the admin button is toggled
+            $('#students-admin').html('');
+
+            // pass in data
+            $('#admin-sessions').attr('value', days);
+
+            // render template with students
+            while (index < studentsLength) {
+                $('#students-admin').append(template.replace('%name%',
+                    students[index].name).replace('%index%', index));
+
+                index += 1;
+            }
+
+        },
+        update: function() {
+            var context = this.context(),
+                students = context.students,
+                studentsLength = students.length,
+                index = 0,
+                updates = {
+                    days: 0,
+                    students: []
+                };
+
+            // update the data
+            $('#admin-button-update').click(function() {
+                // get the data from the form
+
+                // get the days
+                updates.days = $('#admin-sessions').val();
+
+                while (index < studentsLength) {
+                    updates.students[index] = $('#admin-student-' + index).val();
+                    index += 1;
+                }
+
+                // set the updates
+                app.adminUpdate(updates);
+
+                // close and clear the admin area
+                adminView.clearForm();
+
+                // re render
+                $('.student').html('');
+                $('.attend-col').html('');
+
+                view.init();
+
+                console.log(data);
+            });
+        },
+        cancel: function() {
+            // cancel button is pressed
+            $('#admin-button-cancel').click(function() {
+                adminView.clearForm();
+            });
+        },
+        clearForm: function() {
+            $('.attendance-admin-area').toggleClass('hidden');
+
+            // clear the form
+            $('#students-admin').html('');
+        },
+        init: function() {
+            $('#attendance-admin-button').click(function() {
+                adminView.render();
+            });
+            this.cancel();
+            this.update();
+        }
+    };
 
     app.init();
 

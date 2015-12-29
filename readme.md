@@ -1,7 +1,7 @@
 # Attendance Tracker
 
 ## Purpose
-This simple app tracks attendance for the given names and sessions entered. The tracker is written with javascript, jQuery, and Bootstrap. The app is an example of an **MVC design pattern**. Users can enter the number of days (or sessions) and the add students to the class roster.
+This simple app tracks attendance for the given names and sessions entered. The tracker is written with javascript, jQuery, and Bootstrap. The app is an example of an **MVC design pattern**. Users can enter the number of days (or sessions) and add students to the class roster.
 
 **Please note:** because this application uses local storage, the data will not persist (as in a database). This project was merely and exercise to refactor some old code and use an MVC design pattern. The program is made for mobile and desktop views.
 

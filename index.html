@@ -13,18 +13,54 @@
         <link rel="stylesheet" href="css/style.css">
     </head>
     <body class="container">
-        <h1>Attendance Tracker</h1>
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Attendance Tracker</h1>
 
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th class="name-col">Student Name</th>
-                    <!-- cols depending on the number of class sessions -->
-                    <th id="days-missed-header" class="missed-col">Days Missed</th>
-                </tr>
-            </thead>
-            <tbody id="table-content"></tbody>
-        </table>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th class="name-col">Student Name</th>
+                            <!-- cols depending on the number of class sessions -->
+                            <th id="days-missed-header" class="missed-col">Days Missed</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-content"></tbody>
+                </table>
+            </div>
+        </div><!-- /attendance table -->
+
+        <!-- admin area -->
+        <div class="row">
+            <div class="col-md-12">
+                <input class="btn btn-warning" type="button" id="attendance-admin-button" value="admin">
+            </div>
+        </div>
+
+        <div class="row attendance-admin-area hidden">
+            <div class="col-md-12">
+                <!-- sessions label -->
+                <div class="sessions-label">
+                    <label for="admin-sessions">Sessions: </label>
+                    <input id="admin-sessions" class="form-control" type="text" value="">
+                </div>
+
+                <form id="admin-form">
+                    <table class="table table-striped">
+                        <tbody id="students-admin">
+                            <!-- sessions label -->
+                            <tr>
+                                <td><label for="admin-sessions">Sessions: </label></td>
+                                <td><input id="admin-sessions" class="form-control" type="text" value=""></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- buttons -->
+                    <input class="btn btn-success" type="button" value="update" id="admin-button-update">
+                    <input class="btn btn-default" type="button" value="cancel" id="admin-button-cancel">
+                </form>
+            </div>
+        </div><!-- /admin area -->
 
         <script src="js/jquery-2.1.4.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
@@ -53,12 +89,21 @@
             <td class="attend-col"><input class="checkbox" id="%studentId%-%session%" type="checkbox" %status%></td>
         </script>
 
+        <!-- admin form template -->
+        <script type="text/template" data-template="attendance-admin">
+            <tr>
+                <td><label for="admin-student-name">Student Name:</label></td>
+                <td><input id="admin-student-%index%" class="form-control" type="text" value="%name%"></td>
+            </tr>
+        </script>
+
         <script>
             var attendanceAppTargets = {
                 attendanceHeader: 'script[data-template="attendance-header"',
                 attendanceHeaderMobile: 'script[data-template="attendance-header-mobile"',
                 attendanceStudent: 'script[data-template="attendance-student"',
-                attendanceCheckBox: 'script[data-template="attendance-check-box"'
+                attendanceCheckBox: 'script[data-template="attendance-check-box"',
+                adminTemplate: 'script[data-template="attendance-admin"'
             };
 
             // run the app script

@@ -2,6 +2,22 @@ input {
     cursor: pointer;
 }
 
+form {
+    margin: 20px 0;
+}
+
+#admin-sessions {
+    width: 50px;
+}
+
+.hidden {
+    display: none;
+}
+
+.sessions-label {
+    margin-top: 15px;
+}
+
 /* responsive */
 @media (max-width: 767px) {
     .attend-col {
