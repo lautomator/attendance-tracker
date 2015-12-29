@@ -1,4 +1,4 @@
-var udacityAttendanceApp = function(targets) {
+var attendanceTrackerApp = function(targets) {
 
     // model
     var data = {
@@ -6,23 +6,23 @@ var udacityAttendanceApp = function(targets) {
         days: 12,
         students: [
             {
-                name:   'Slappy the Frog',
+                name:   'student 1',
                 attendance: []
             },
             {
-                name:   'Lilly the Lizard',
+                name:   'student 2',
                 attendance: []
             },
             {
-                name:   'Paulrus the Walrus',
+                name:   'student 3',
                 attendance: []
             },
             {
-                name:   'Gregory the Goat',
+                name:   'student 4',
                 attendance: []
             },
             {
-                name:   'Adam the Anaconda',
+                name:   'student 5',
                 attendance: []
             }
         ],
@@ -111,6 +111,7 @@ var udacityAttendanceApp = function(targets) {
                     days: allData.days,
                     students: allData.students,
                     headTemplate: targets.attendanceHeader,
+                    headTemplateMobile: targets.attendanceHeaderMobile,
                     bodyTemplate: targets.attendanceStudent,
                     checkBoxes: targets.attendanceCheckBox
                 };
@@ -123,6 +124,7 @@ var udacityAttendanceApp = function(targets) {
                 students = context.students,
                 totalStudents = context.students.length,
                 tableHead = $(context.headTemplate).html(),
+                tableHeadMobile = $(context.headTemplateMobile).html(),
                 tableBody = $(context.bodyTemplate).html(),
                 checkBox = $(context.checkBoxes).html(),
                 tableHeadHtml,
@@ -135,14 +137,19 @@ var udacityAttendanceApp = function(targets) {
                 i, j;
 
             // build and render the template for the table header (cols)
-            while (day <= totalDays) {
+            if ($(window).width() > 767) {
+                while (day <= totalDays) {
 
-                // render the template header with the data
-                tableHeadHtml = tableHead.replace('%classNumber%', day);
+                    // render the template header with the data
+                    tableHeadHtml = tableHead.replace('%classNumber%', day);
 
+                    $('#days-missed-header').before(tableHeadHtml);
+
+                    day += 1;
+                }
+            } else {
+                tableHeadHtml = tableHeadMobile.replace('%totalSessions%', totalDays);
                 $('#days-missed-header').before(tableHeadHtml);
-
-                day += 1;
             }
 
             // build and render the template for the table body (rows)
@@ -156,7 +163,7 @@ var udacityAttendanceApp = function(targets) {
                     missed).replace(/%studentId%/g, index);
 
                 // render the name of the student,
-                $('#tableContent').append(tableBodyHtml);
+                $('#table-content').append(tableBodyHtml);
 
                 // render the class sessions checkboxes,
                 for (i = attendance.length - 1; i >= 0; i -= 1) {

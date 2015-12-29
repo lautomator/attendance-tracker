@@ -1,34 +1,14 @@
-body {
-    line-height: 1.6;
-    margin: 2em;
-}
-
-th {
-    background-color: #001f3f;
-    color: #fff;
-    padding: 0.5em 1em;
-}
-
-td {
-    border-bottom: 1px solid #eee;
-    padding: 0.5em 1em;
-}
-
 input {
     cursor: pointer;
 }
 
-/* Column types */
-th.missed-col {
-    background-color: #f00;
-}
+/* responsive */
+@media (max-width: 767px) {
+    .attend-col {
+        display: inline-block;
+    }
 
-td.missed-col {
-    background-color: #ffecec;
-    color: #f00;
-    text-align: center;
-}
-
-.name-col {
-    text-align: left;
+    th, td {
+        border: none !important;
+    }
 }
