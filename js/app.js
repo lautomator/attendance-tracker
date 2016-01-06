@@ -101,14 +101,56 @@ var attendanceTrackerApp = function(targets) {
 
             while (index < studentsLength) {
                 data.students[index].name = pupils[index];
-                console.log(pupils[index]);
                 index += 1;
             }
         },
         update: function(days, students) {
+            var index = 0,
+                index2 = 0,
+                daysAdjust = 0,
+                studentsLength = data.students.length;
+
+            // add or delete days to the attendance matrix, if necessary
+            if (days > data.days) {
+                // get the difference
+                daysAdjust = days - data.days;
+
+                // traverse the students array
+                while (index < studentsLength) {
+                    // add more days to the matrix
+                    while (index2 < daysAdjust) {
+                        data.students[index].attendance.push(false);
+
+                        index2 += 1;
+                    }
+
+                    index += 1;
+                }
+            }
+
+            if (days < data.days) {
+                // get the difference
+                daysAdjust = data.days - days;
+
+                // traverse the students array
+                while (index < studentsLength) {
+                    // remove days from the matrix
+                    while (index2 < daysAdjust) {
+                        data.students[index].attendance.pop();
+
+                        index2 += 1;
+                    }
+
+                    index += 1;
+                }
+            }
+
             // set the updates
-            this.setDays(days);
             this.setStudents(students);
+            this.setDays(days);
+
+            console.log(data.students[0].attendance.length);
+
         },
         init: function() {
             this.createRecords();
@@ -291,9 +333,6 @@ var attendanceTrackerApp = function(targets) {
                     index += 1;
                 }
 
-                // log the updates -> TEMP
-                console.log('updates:', updates);
-
                 // refresh the app
                 app.update(updates.days, updates.students);
 
@@ -304,6 +343,8 @@ var attendanceTrackerApp = function(targets) {
                 $('.sessions').remove();
                 // clear any existing html
                 $('#table-content').html('');
+                // remove any existing check boxes
+                $('.checkbox').remove();
 
                 view.init();
 
