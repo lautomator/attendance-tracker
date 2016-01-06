@@ -2,48 +2,30 @@ var attendanceTrackerApp = function(targets) {
 
     // model
     var data = {
-        // app data
+        // default app data
         days: 12,
         students: [
             {
-                name:   'student 1',
+                name:   'default 1',
                 attendance: []
             },
             {
-                name:   'student 2',
+                name:   'default 2',
                 attendance: []
             },
             {
-                name:   'student 3',
+                name:   'default 3',
                 attendance: []
             },
             {
-                name:   'student 4',
+                name:   'default 4',
                 attendance: []
             },
             {
-                name:   'student 5',
+                name:   'default 5',
                 attendance: []
             }
-        ],
-        setAttendance: function(student, session, value) {
-            // updates the attendance array
-            data.students[student].attendance[session] = value;
-        },
-        setDays: function(days) {
-            // updates the days
-            data.days = days;
-        },
-        setStudents: function(students) {
-            // updates the names of the students
-            var index = 0
-                studentsLength = students.length;
-
-            while (index < studentsLength) {
-                data.students[index].name = students[index];
-                index += 1;
-            }
-        }
+        ]
     };
 
     // controller
@@ -71,7 +53,12 @@ var attendanceTrackerApp = function(targets) {
             while (index < studentsLength) {
                 // push true or false values to each name array, resp.
                 for (classes = 0; classes < totalDays; classes += 1) {
-                    students[index].attendance.push(this.getRandom());
+
+                    // for pushing random values to the array
+                    // students[index].attendance.push(this.getRandom());
+
+                    // the default state
+                    students[index].attendance.push(false);
                 }
 
                 index += 1;
@@ -99,32 +86,33 @@ var attendanceTrackerApp = function(targets) {
 
             return missed;
         },
-        attendanceUpdate: function(student, button, value) {
+        setAttendance: function(student, session, value) {
             // updates the attendance array
-            // for the selected student, button,
-            // and value (checked or unchecked)
-
-            // update the data
-            data.setAttendance(student, button, value);
+            data.students[student].attendance[session] = value;
         },
-        adminUpdate: function(updates) {
-            // parses the updates object and
-            // send them back to the data model
-            var days = updates.days,
-                students = updates.students;
+        setDays: function(days) {
+            // updates the days
+            data.days = days;
+        },
+        setStudents: function(pupils) {
+            // updates the names of the students
+            var index = 0
+                studentsLength = pupils.length;
 
-            data.setDays(days);
-
-            data.setStudents(students);
+            while (index < studentsLength) {
+                data.students[index].name = pupils[index];
+                console.log(pupils[index]);
+                index += 1;
+            }
+        },
+        update: function(days, students) {
+            // set the updates
+            this.setDays(days);
+            this.setStudents(students);
         },
         init: function() {
-            // create some records
             this.createRecords();
-
-            // render the view layer
             view.init();
-
-            // render the admin view
             adminView.init();
         }
     };
@@ -192,7 +180,7 @@ var attendanceTrackerApp = function(targets) {
                 // render the name of the student,
                 $('#table-content').append(tableBodyHtml);
 
-                // render the class sessions checkboxes,
+                // render the class sessions checkboxes
                 for (i = attendance.length - 1; i >= 0; i -= 1) {
                     // render the check boxes
                     if (attendance[i] === true) {
@@ -220,13 +208,13 @@ var attendanceTrackerApp = function(targets) {
                             if (selectedBox.is(':checked')) {
                                 // the checkbox was checked
                                 // update the records
-                                app.attendanceUpdate(index, j, true);
+                                app.setAttendance(index, j, true);
                                 // update the view
                                 $('#missed-' + index).text(app.attendanceCount(index));
                             } else {
                                 // the checkbox was unchecked
                                 // update the records
-                                app.attendanceUpdate(index, j, false);
+                                app.setAttendance(index, j, false);
                                 // update the view
                                 $('#missed-' + index).text(app.attendanceCount(index));
                             }
@@ -238,7 +226,6 @@ var attendanceTrackerApp = function(targets) {
             }
         },
         init: function() {
-            // render the view
             this.render();
         }
     };
@@ -256,44 +243,46 @@ var attendanceTrackerApp = function(targets) {
             return context;
         },
         render: function() {
-            var context = this.context(),
-                days = context.days,
-                students = context.students,
-                studentsLength = students.length,
-                template = $(context.adminTemplate).html(),
-                index = 0;
+            $('#attendance-admin-button').click(function() {
 
-            // display the admin panel
-            $('.attendance-admin-area').toggleClass('hidden');
-            // clear any html incase the admin button is toggled
-            $('#students-admin').html('');
+                var context = adminView.context(),
+                    days = context.days,
+                    students = context.students,
+                    studentsLength = students.length,
+                    template = $(context.adminTemplate).html(),
+                    index = 0;
 
-            // pass in data
-            $('#admin-sessions').attr('value', days);
+                // display the admin panel
+                $('.attendance-admin-area').toggleClass('hidden');
+                // clear any html incase the admin button is toggled
+                $('#students-admin').html('');
 
-            // render template with students
-            while (index < studentsLength) {
-                $('#students-admin').append(template.replace('%name%',
-                    students[index].name).replace('%index%', index));
+                // pass in data
+                $('#admin-sessions').attr('value', days);
 
-                index += 1;
-            }
+                // render template with students
+                while (index < studentsLength) {
+                    $('#students-admin').append(template.replace('%name%',
+                        students[index].name).replace('%index%', index));
+
+                    index += 1;
+                }
+            });
 
         },
         update: function() {
-            var context = this.context(),
-                students = context.students,
-                studentsLength = students.length,
-                index = 0,
-                updates = {
-                    days: 0,
-                    students: []
-                };
-
             // update the data
             $('#admin-button-update').click(function() {
-                // get the data from the form
+                var context = adminView.context(),
+                    students = context.students,
+                    studentsLength = students.length,
+                    index = 0,
+                    updates = {
+                        days: 0,
+                        students: []
+                    };
 
+                // get the data from the form:
                 // get the days
                 updates.days = $('#admin-sessions').val();
 
@@ -302,37 +291,38 @@ var attendanceTrackerApp = function(targets) {
                     index += 1;
                 }
 
-                // set the updates
-                app.adminUpdate(updates);
+                // log the updates -> TEMP
+                console.log('updates:', updates);
+
+                // refresh the app
+                app.update(updates.days, updates.students);
 
                 // close and clear the admin area
-                adminView.clearForm();
+                adminView.hideForm();
 
-                // re render
-                $('.student').html('');
-                $('.attend-col').html('');
+                // remove the existing sessions
+                $('.sessions').remove();
+                // clear any existing html
+                $('#table-content').html('');
 
                 view.init();
 
-                console.log(data);
             });
         },
         cancel: function() {
             // cancel button is pressed
             $('#admin-button-cancel').click(function() {
-                adminView.clearForm();
+                adminView.hideForm();
             });
         },
-        clearForm: function() {
+        hideForm: function() {
             $('.attendance-admin-area').toggleClass('hidden');
 
             // clear the form
             $('#students-admin').html('');
         },
         init: function() {
-            $('#attendance-admin-button').click(function() {
-                adminView.render();
-            });
+            this.render();
             this.cancel();
             this.update();
         }
